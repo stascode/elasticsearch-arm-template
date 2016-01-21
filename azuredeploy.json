@@ -2,69 +2,96 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "version": {
+    "identifierPrefix": {
       "type": "string",
-      "defaultValue": "",
       "metadata": {
-        "desciprtion": "The string suffix representing deployment version. Used for the dns-based resources to avoid conflicts."
+        "description": "Unique identifier prefix."
+      }
+    },
+
+    "applicationIdentifier": {
+      "type": "string",
+      "metadata": {
+        "description": "Application or area identifier to further qualify Azure resource"
+      }
+    },
+
+    "region": {
+      "type": "string",
+      "defaultValue": "East US",
+      "metadata": {
+        "description": "Location where resources will be provisioned"
+      }
+    },
+
+    "environmentVersion": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Version of the cluster."
+      }
+    },
+
+    "environment": {
+      "type": "string",
+      "defaultValue": "staging",
+      "allowedValues": [
+        "staging",
+        "production"
+      ],
+      "metadata": {
+        "description": "Environment."
       }
     },
 
     "adminUsername": {
       "type": "string",
       "metadata": {
-        "description": "Admin username used for provisioning virtual machines"
+        "description": "Admin user name."
       }
     },
 
     "adminPassword": {
       "type": "securestring",
       "metadata": {
-        "description": "Admin SSH key used when provisioning virtual machines"
-      }
-    },
-
-    "location": {
-      "type": "string",
-      "defaultValue": "East US",
-      "allowedValues": [
-        "West US",
-        "East US",
-        "East Asia",
-        "Southeast Asia",
-        "West Europe"
-      ],
-      "metadata": {
-        "description": "Location where resources will be provisioned"
+        "description": "Admin password."
       }
     },
 
     "virtualMachineSize": {
       "type": "string",
-      "defaultValue": "Standard_D2",
+      "defaultValue": "Standard_DS2",
       "metadata": {
-        "description": "The size of the virtual machine instance"
+        "description": "Machine Size."
       }
     },
 
-    "elasticsearchClusterDnsName": {
+    "virtualMachineStorageAccountType": {
       "type": "string",
-      "defaultValue": "telemetry",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS"
+      ],
+      "defaultValue": "Standard_LRS",
       "metadata": {
-        "description": "The DNS prefix that will be used for the public facing IP address"
+        "description": "Replication option for the VM image storage account"
       }
     }
   },
 
   "variables": {
-    "storageAccountName": "[concat('esvmstorage', parameters('version'))]",
-    "elasticsearchPublicIpName": "[concat('es-public-ip', '-', parameters('version'))]",
-    "virtualNetworkName": "[concat('es-vnet', '-', parameters('version'))]",
-    "virtualMachineNicName": "[concat('es-vm-nic', '-', parameters('version'))]",
-    "virtualMachineName": "[concat('es-vm', '-', parameters('version'))]",
-    "networkSecurityGroupName": "[concat('es-nsg', '-', parameters('version'))]",
+    "environmentDesignator": {
+      "staging": "np",
+      "production": "pd"
+    },
 
-    "templateBaseUrl": "https://raw.githubusercontent.com/moorandrew/elasticsearch-arm-template/master/",
+    "clusterDnsName": "[concat(toLower(parameters('identifierPrefix')), toLower(parameters('applicationIdentifier')), variables('environmentDesignator')[parameters('environment')], parameters('environmentVersion'), 'esc')]",
+    "virtualMachineStorageAccountName": "[concat(toLower(parameters('identifierPrefix')), toLower(parameters('applicationIdentifier')), variables('environmentDesignator')[parameters('environment')], parameters('environmentVersion'), 'sta')]",
+    "virtualNetworkName": "[concat(toUpper(parameters('identifierPrefix')), '-', toUpper(parameters('applicationIdentifier')), '-', toUpper(variables('environmentDesignator')[parameters('environment')]), parameters('environmentVersion'), '-', 'VNET', '001')]",
+    "networkSecurityGroupName": "[concat(toUpper(parameters('identifierPrefix')), '-', toUpper(parameters('applicationIdentifier')), '-', toUpper(variables('environmentDesignator')[parameters('environment')]), parameters('environmentVersion'), '-', 'NSG')]",
+    "networkInterfaceName": "[concat(toUpper(parameters('identifierPrefix')), '-', toUpper(parameters('applicationIdentifier')), '-', toUpper(variables('environmentDesignator')[parameters('environment')]), parameters('environmentVersion'), '-', 'NIC')]",
+    "publicIpName": "[concat(toUpper(parameters('identifierPrefix')), '-', toUpper(parameters('applicationIdentifier')), '-', toUpper(variables('environmentDesignator')[parameters('environment')]), parameters('environmentVersion'), '-', 'PIP', '001')]",
+    "virtualMachineName": "[concat(toUpper(parameters('identifierPrefix')), '-', toUpper(parameters('applicationIdentifier')), '-', toUpper(variables('environmentDesignator')[parameters('environment')]), parameters('environmentVersion'), '-', 'VM')]",
 
     "virtualNetworkSettings": {
       "addressPrefix": "10.0.0.0/16",
@@ -76,14 +103,8 @@
       }
     },
 
-    "elasticsearchSettings": {
-      "clusterName": "elasticsearch",
-      "clusterVersion": "1.7.2",
-      "clusterDnsName": "[concat(parameters('elasticsearchClusterDnsName'), parameters('version'))]"
-    },
-
     "osSettings": {
-      "computerName": "telemetryvm",
+      "computerName": "SNR-ESC-PC1",
       "imageReference": {
         "publisher": "Canonical",
         "offer": "UbuntuServer",
@@ -95,6 +116,15 @@
       "dataDiskSize": 1023
     },
 
+
+    "templateBaseUrl": "https://raw.githubusercontent.com/moorandrew/elasticsearch-arm-template/master/",
+
+    "elasticsearchSettings": {
+      "clusterName": "elasticsearch",
+      "clusterVersion": "1.7.2",
+      "clusterDnsName": "[variables('clusterDnsName')]"
+    },
+
     "osExtensionSettings": {
       "scripts": [
         "[concat(variables('templateBaseUrl'), 'elasticsearch-ubuntu-install.sh')]",
@@ -102,21 +132,23 @@
       ]
     }
   },
+
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storageAccountName')]",
+      "name": "[variables('virtualMachineStorageAccountName')]",
       "apiVersion": "2015-05-01-preview",
-      "location": "[parameters('location')]",
+      "location": "[parameters('region')]",
       "properties": {
         "accountType": "Standard_LRS"
       }
     },
+
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[variables('elasticsearchPublicIpName')]",
-      "location": "[parameters('location')]",
+      "name": "[variables('publicIpName')]",
+      "location": "[parameters('region')]",
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
@@ -124,11 +156,12 @@
         }
       }
     },
+
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[variables('virtualNetworkName')]",
-      "location": "[parameters('location')]",
+      "location": "[parameters('region')]",
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
@@ -149,7 +182,7 @@
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('networkSecurityGroupName')]",
-      "location": "[parameters('location')]",
+      "location": "[parameters('region')]",
       "properties": {
         "securityRules": [
           {
@@ -200,10 +233,10 @@
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[variables('virtualMachineNicName')]",
-      "location": "[parameters('location')]",
+      "name": "[variables('networkInterfaceName')]",
+      "location": "[parameters('region')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('elasticsearchPublicIpName'))]"
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpName'))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -212,7 +245,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('elasticsearchPublicIpName'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpName'))]"
               },
               "subnet": {
                 "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName')), '/subnets/', variables('virtualNetworkSettings').subnets.default.name)]"
@@ -226,10 +259,10 @@
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[variables('virtualMachineName')]",
-      "location": "[parameters('location')]",
+      "location": "[parameters('region')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', variables('virtualMachineNicName'))]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
+        "[concat('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]",
+        "[concat('Microsoft.Storage/storageAccounts/', variables('virtualMachineStorageAccountName'))]"
       ],
       "properties": {
         "hardwareProfile": {
@@ -245,7 +278,7 @@
           "osDisk": {
             "name": "osdisk",
             "vhd": {
-              "uri": "[concat('http://', variables('storageAccountName'), '.blob.core.windows.net/vhd/', variables('virtualMachineName'), '-osdisk.vhd')]"
+              "uri": "[concat('http://', variables('virtualMachineStorageAccountName'), '.blob.core.windows.net/vhd/', variables('virtualMachineName'), '-osdisk.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -256,7 +289,7 @@
               "diskSizeGB": "[variables('osSettings').dataDiskSize]",
               "lun": 0,
               "vhd": {
-                "uri": "[concat('http://', variables('storageAccountName'), '.blob.core.windows.net/', 'vhd/', variables('virtualMachineName'), '-dataDisk1.vhd')]"
+                "uri": "[concat('http://', variables('virtualMachineStorageAccountName'), '.blob.core.windows.net/', 'vhd/', variables('virtualMachineName'), '-dataDisk1.vhd')]"
               },
               "caching": "None",
               "createOption": "Empty"
@@ -266,7 +299,7 @@
               "diskSizeGB": "[variables('osSettings').dataDiskSize]",
               "lun": 1,
               "vhd": {
-                "uri": "[concat('http://', variables('storageAccountName'), '.blob.core.windows.net/', 'vhd/', variables('virtualMachineName'), '-dataDisk2.vhd')]"
+                "uri": "[concat('http://', variables('virtualMachineStorageAccountName'), '.blob.core.windows.net/', 'vhd/', variables('virtualMachineName'), '-dataDisk2.vhd')]"
               },
               "caching": "None",
               "createOption": "Empty"
@@ -276,7 +309,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('virtualMachineNicName'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
             }
           ]
         }
@@ -286,7 +319,7 @@
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(variables('virtualMachineName'), '/installelasticsearch')]",
       "apiVersion": "2015-05-01-preview",
-      "location": "[parameters('location')]",
+      "location": "[parameters('region')]",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', variables('virtualMachineName'))]"
       ],
@@ -304,15 +337,15 @@
   "outputs": {
     "kibana-url": {
       "type": "string",
-      "value": "[concat(reference(variables('elasticsearchPublicIpName')).dnsSettings.fqdn, ':', '5601')]"
+      "value": "[concat(reference(variables('publicIpName')).dnsSettings.fqdn, ':', '5601')]"
     },
     "elasticsearch-url": {
       "type": "string",
-      "value": "[concat(reference(variables('elasticsearchPublicIpName')).dnsSettings.fqdn, ':', '9200')]"
+      "value": "[concat(reference(variables('publicIpName')).dnsSettings.fqdn, ':', '9200')]"
     },
     "marvel-url": {
       "type": "string",
-      "value": "[concat(reference(variables('elasticsearchPublicIpName')).dnsSettings.fqdn, ':', '9200', '/_plugin/marvel')]"
+      "value": "[concat(reference(variables('publicIpName')).dnsSettings.fqdn, ':', '9200', '/_plugin/marvel')]"
     }
   }
 }

@@ -2,20 +2,36 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "adminUsername": {
-      "value": "amoor"
+    "identifierPrefix": {
+      "value": "SNR"
     },
+
+    "applicationIdentifier": {
+      "value": "ESC"
+    },
+
+    "region": {
+      "value": "West US"
+    },
+
+    "environmentVersion": {
+      "value": 1
+    },
+
+    "environment": {
+      "value": "staging"
+    },
+
+    "adminUsername": {
+      "value": "azureuser"
+    },
+
     "adminPassword": {
       "value": "WSXzaq123"
     },
-    "location": {
-      "value": "East US"
-    },
+
     "virtualMachineSize": {
-      "value": "Standard_D2"
-    },
-    "elasticsearchClusterDnsName": {
-      "value": "es"
+      "value": "Standard_DS2"
     }
   }
 }
