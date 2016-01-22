@@ -34,6 +34,8 @@ help()
     echo "-l install marvel yes/no"
     echo "-k install kibana yes/no"
     echo "-h view this help content"
+	echo "-u username used for the basic authentication"
+    echo "-p password used for the basic authentication"
 }
 
 # Log method to control/redirect log output
@@ -75,6 +77,8 @@ KIBANA_VERSION = "4.1"
 DISCOVERY_ENDPOINTS=""
 INSTALL_MARVEL="yes"
 INSTALL_KIBANA="yes"
+USERNAME="azureuser"
+PASSWORD="WSXzaq123"
 
 #Loop through options passed
 while getopts :n:d:v:l:k:sh optname; do
@@ -98,6 +102,12 @@ while getopts :n:d:v:l:k:sh optname; do
     s) #use OS striped disk volumes
       OS_STRIPED_DISK=1
       ;;
+	u) #username
+	  USERNAME=${OPTARG}
+	  ;;
+	p) #password
+	  PASSWORD=${OPTARG}
+	  ;;
     h) #show help
       help
       exit 2
@@ -272,14 +282,15 @@ if [ "${INSTALL_KIBANA}" == "yes" ];
     sudo service kibana start
 fi
 
-#Install Monit
-#TODO - Install Monit to monitor the process (Although load balancer probes can accomplish this)
-
 #and... start the service
 log "Starting Elasticsearch on ${HOSTNAME}"
 update-rc.d elasticsearch defaults 95 10
 sudo service elasticsearch start
 log "complete elasticsearch setup and started"
+
+# Install Nginx
+bash nginx-ubuntu-install.sh -u $USERNAME -p $PASSWORD
+
 exit 0
 
 #Script Extras
