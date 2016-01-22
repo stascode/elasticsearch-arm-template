@@ -87,7 +87,7 @@ install_nginx()
 {
 	log "Installing Nginx"
 	apt-get update
-	apt-get install nginx
+	apt-get -y install nginx
 }
 
 # Primary Install Tasks
