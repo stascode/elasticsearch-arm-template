@@ -18,7 +18,6 @@
 
     "region": {
       "type": "string",
-      "defaultValue": "East US",
       "metadata": {
         "description": "Location where resources will be provisioned"
       }
@@ -117,7 +116,7 @@
     },
 
 
-    "templateBaseUrl": "https://raw.githubusercontent.com/moorandrew/elasticsearch-arm-template/master/",
+    "templateBaseUrl": "https://raw.githubusercontent.com/andrey-moor/elasticsearch-arm-template/master/",
 
     "elasticsearchSettings": {
       "clusterName": "elasticsearch",
@@ -128,7 +127,8 @@
     "osExtensionSettings": {
       "scripts": [
         "[concat(variables('templateBaseUrl'), 'elasticsearch-ubuntu-install.sh')]",
-        "[concat(variables('templateBaseUrl'), 'vm-disk-utils-0.1.sh')]"
+        "[concat(variables('templateBaseUrl'), 'vm-disk-utils-0.1.sh')]",
+        "[concat(variables('templateBaseUrl'), 'nginx-ubuntu-install.sh')]"
       ]
     }
   },
@@ -330,6 +330,24 @@
         "settings": {
           "fileUris": "[variables('osExtensionSettings').scripts]",
           "commandToExecute": "[concat('bash elasticsearch-ubuntu-install.sh -n ', variables('elasticsearchSettings').clusterName, ' -v ', variables('elasticsearchSettings').clusterVersion, ' -d ', '127.0.0.1')]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('virtualMachineName'), '/installelasticsearch')]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[parameters('region')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('virtualMachineName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.OSTCExtensions",
+        "type": "CustomScriptForLinux",
+        "typeHandlerVersion": "1.2",
+        "settings": {
+          "fileUris": "[variables('osExtensionSettings').scripts]",
+          "commandToExecute": "[concat('bash nginx-ubuntu-install.sh -u ', parameters('adminUsername'), ' -p ', parameters('adminPassword'))]"
         }
       }
     }
