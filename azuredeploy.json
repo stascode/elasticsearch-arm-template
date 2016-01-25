@@ -344,15 +344,15 @@
   "outputs": {
     "kibana-url": {
       "type": "string",
-      "value": "[concat(reference(variables('publicIpName')).dnsSettings.fqdn, ':', '5601')]"
+      "value": "[concat(reference(variables('publicIpName')).dnsSettings.fqdn, ':', '5602')]"
     },
     "elasticsearch-url": {
       "type": "string",
-      "value": "[concat(reference(variables('publicIpName')).dnsSettings.fqdn, ':', '9200')]"
+      "value": "[concat(reference(variables('publicIpName')).dnsSettings.fqdn, ':', '9201')]"
     },
     "marvel-url": {
       "type": "string",
-      "value": "[concat(reference(variables('publicIpName')).dnsSettings.fqdn, ':', '9200', '/_plugin/marvel')]"
+      "value": "[concat(reference(variables('publicIpName')).dnsSettings.fqdn, ':', '9201', '/_plugin/marvel')]"
     }
   }
 }
