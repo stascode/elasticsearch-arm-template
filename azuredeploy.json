@@ -172,7 +172,10 @@
           {
             "name": "[variables('virtualNetworkSettings').subnets.default.name]",
             "properties": {
-              "addressPrefix": "[variables('virtualNetworkSettings').subnets.default.prefix]"
+              "addressPrefix": "[variables('virtualNetworkSettings').subnets.default.prefix]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+              }
             }
           }
         ]
@@ -204,8 +207,8 @@
             "properties": {
               "description": "Allows Kibana connection",
               "protocol": "Tcp",
-              "sourcePortRange": "5601",
-              "destinationPortRange": "5601",
+              "sourcePortRange": "5602",
+              "destinationPortRange": "5602",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
               "access": "Allow",
@@ -218,8 +221,8 @@
             "properties": {
               "description": "Allows Elasticsearch connection",
               "protocol": "Tcp",
-              "sourcePortRange": "9200",
-              "destinationPortRange": "9200",
+              "sourcePortRange": "9201",
+              "destinationPortRange": "9201",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
               "access": "Allow",
