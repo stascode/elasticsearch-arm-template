@@ -80,7 +80,7 @@ USERNAME="azureuser"
 PASSWORD="WSXzaq123"
 
 #Loop through options passed
-while getopts :n:d:v:l:k:sh optname; do
+while getopts :n:d:v:l:k:u:p:sh optname; do
     log "Option $optname set with value ${OPTARG}"
   case $optname in
     n) #set cluster name
