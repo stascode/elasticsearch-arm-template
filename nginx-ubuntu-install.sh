@@ -110,7 +110,7 @@ echo "	auth_basic \"Elasticsearch authentication\";" >> /etc/nginx/sites-availab
 echo "	auth_basic_user_file /etc/nginx/elasticsearch-passwords;" >> /etc/nginx/sites-available/elasticsearch
 
 echo "	location / {" >> /etc/nginx/sites-available/elasticsearch
-echo "		proxy_pass http://elasticsearch;" >> /etc/nginx/sites-available/elasticsearch
+echo "		proxy_pass http://kibana;" >> /etc/nginx/sites-available/elasticsearch
 echo "		proxy_http_version 1.1;" >> /etc/nginx/sites-available/elasticsearch
 echo "		proxy_set_header Connection \"Keep-Alive\";" >> /etc/nginx/sites-available/elasticsearch
 echo "		proxy_set_header Proxy-Connection \"Keep-Alive\";" >> /etc/nginx/sites-available/elasticsearch
