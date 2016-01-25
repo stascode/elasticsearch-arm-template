@@ -73,7 +73,6 @@ fi
 #Script Parameters
 CLUSTER_NAME="elasticsearch"
 ES_VERSION="1.7.2"
-KIBANA_VERSION="4.1"
 DISCOVERY_ENDPOINTS="127.0.0.1"
 INSTALL_MARVEL="yes"
 INSTALL_KIBANA="yes"
@@ -263,7 +262,7 @@ fi
 #Optionally Install Kibana
 if [ "${INSTALL_KIBANA}" == "yes" ];
   then
-    log "Installing Kibana Version - $KIBANA_VERSION"
+    log "Installing Kibana"
 
     # Import the Elasticsearch public GPG key into apt
     sudo wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
