@@ -105,27 +105,21 @@ install_nginx
 #Configure Nginx settings
 #---------------------------
 
-echo "events {" >> /etc/nginx/sites-available/elasticsearch
-echo "	worker_connections 1024;" >> /etc/nginx/sites-available/elasticsearch
+echo "upstream elasticsearch {" >> /etc/nginx/sites-available/elasticsearch
+echo "	server 127.0.0.1:9200;" >> /etc/nginx/sites-available/elasticsearch
+echo "	keepalive 15;" >> /etc/nginx/sites-available/elasticsearch
 echo "}" >> /etc/nginx/sites-available/elasticsearch
 
-echo "http {" >> /etc/nginx/sites-available/elasticsearch
-echo "	upstream elasticsearch {" >> /etc/nginx/sites-available/elasticsearch
-echo "		server 127.0.0.1:9200;" >> /etc/nginx/sites-available/elasticsearch
-echo "		keepalive 15;" >> /etc/nginx/sites-available/elasticsearch
-echo "}" >> /etc/nginx/sites-available/elasticsearch
+echo "server {" >> /etc/nginx/sites-available/elasticsearch
+echo "	listen 9201;" >> /etc/nginx/sites-available/elasticsearch
+echo "	auth_basic \"Elasticsearch authentication\";" >> /etc/nginx/sites-available/elasticsearch
+echo "	auth_basic_user_file /etc/nginx/elasticsearch-passwords;" >> /etc/nginx/sites-available/elasticsearch
 
-echo "	server {" >> /etc/nginx/sites-available/elasticsearch
-echo "		listen 9201;" >> /etc/nginx/sites-available/elasticsearch
-echo "		auth_basic \"Elasticsearch authentication\";" >> /etc/nginx/sites-available/elasticsearch
-echo "		auth_basic_user_file /etc/nginx/elasticsearch-passwords;" >> /etc/nginx/sites-available/elasticsearch
-
-echo "		location / {" >> /etc/nginx/sites-available/elasticsearch
-echo "			proxy_pass http://elasticsearch;" >> /etc/nginx/sites-available/elasticsearch
-echo "			proxy_http_version 1.1;" >> /etc/nginx/sites-available/elasticsearch
-echo "			proxy_set_header Connection \"Keep-Alive\";" >> /etc/nginx/sites-available/elasticsearch
-echo "			proxy_set_header Proxy-Connection \"Keep-Alive\";" >> /etc/nginx/sites-available/elasticsearch
-echo "		}" >> /etc/nginx/sites-available/elasticsearch
+echo "	location / {" >> /etc/nginx/sites-available/elasticsearch
+echo "		proxy_pass http://elasticsearch;" >> /etc/nginx/sites-available/elasticsearch
+echo "		proxy_http_version 1.1;" >> /etc/nginx/sites-available/elasticsearch
+echo "		proxy_set_header Connection \"Keep-Alive\";" >> /etc/nginx/sites-available/elasticsearch
+echo "		proxy_set_header Proxy-Connection \"Keep-Alive\";" >> /etc/nginx/sites-available/elasticsearch
 echo "	}" >> /etc/nginx/sites-available/elasticsearch
 echo "}" >> /etc/nginx/sites-available/elasticsearch
 
