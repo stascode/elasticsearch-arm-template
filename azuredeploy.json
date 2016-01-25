@@ -86,10 +86,10 @@
 
     "clusterDnsName": "[concat(toLower(parameters('identifierPrefix')), toLower(parameters('applicationIdentifier')), variables('environmentDesignator')[parameters('environment')], parameters('environmentVersion'), 'esc')]",
     "virtualMachineStorageAccountName": "[concat(toLower(parameters('identifierPrefix')), toLower(parameters('applicationIdentifier')), variables('environmentDesignator')[parameters('environment')], parameters('environmentVersion'), 'sta')]",
-    "virtualNetworkName": "[concat(toUpper(parameters('identifierPrefix')), '-', toUpper(parameters('applicationIdentifier')), '-', toUpper(variables('environmentDesignator')[parameters('environment')]), parameters('environmentVersion'), '-', 'VNET', '001')]",
+    "virtualNetworkName": "[concat(toUpper(parameters('identifierPrefix')), '-', toUpper(parameters('applicationIdentifier')), '-', toUpper(variables('environmentDesignator')[parameters('environment')]), parameters('environmentVersion'), '-', 'VNET')]",
     "networkSecurityGroupName": "[concat(toUpper(parameters('identifierPrefix')), '-', toUpper(parameters('applicationIdentifier')), '-', toUpper(variables('environmentDesignator')[parameters('environment')]), parameters('environmentVersion'), '-', 'NSG')]",
     "networkInterfaceName": "[concat(toUpper(parameters('identifierPrefix')), '-', toUpper(parameters('applicationIdentifier')), '-', toUpper(variables('environmentDesignator')[parameters('environment')]), parameters('environmentVersion'), '-', 'NIC')]",
-    "publicIpName": "[concat(toUpper(parameters('identifierPrefix')), '-', toUpper(parameters('applicationIdentifier')), '-', toUpper(variables('environmentDesignator')[parameters('environment')]), parameters('environmentVersion'), '-', 'PIP', '001')]",
+    "publicIpName": "[concat(toUpper(parameters('identifierPrefix')), '-', toUpper(parameters('applicationIdentifier')), '-', toUpper(variables('environmentDesignator')[parameters('environment')]), parameters('environmentVersion'), '-', 'PIP')]",
     "virtualMachineName": "[concat(toUpper(parameters('identifierPrefix')), '-', toUpper(parameters('applicationIdentifier')), '-', toUpper(variables('environmentDesignator')[parameters('environment')]), parameters('environmentVersion'), '-', 'VM')]",
 
     "virtualNetworkSettings": {
@@ -196,7 +196,7 @@
             "properties": {
               "description": "Allows SSH traffic",
               "protocol": "Tcp",
-              "sourcePortRange": "22",
+              "sourcePortRange": "*",
               "destinationPortRange": "22",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
@@ -210,7 +210,7 @@
             "properties": {
               "description": "Allows Kibana connection",
               "protocol": "Tcp",
-              "sourcePortRange": "5602",
+              "sourcePortRange": "*",
               "destinationPortRange": "5602",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
@@ -224,7 +224,7 @@
             "properties": {
               "description": "Allows Elasticsearch connection",
               "protocol": "Tcp",
-              "sourcePortRange": "9201",
+              "sourcePortRange": "*",
               "destinationPortRange": "9201",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*",
