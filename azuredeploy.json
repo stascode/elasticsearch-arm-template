@@ -242,7 +242,8 @@
       "name": "[variables('networkInterfaceName')]",
       "location": "[parameters('region')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpName'))]"
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIpName'))]",
+        "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
       ],
       "properties": {
         "ipConfigurations": [
