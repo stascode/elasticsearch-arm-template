@@ -86,6 +86,11 @@ echo "	server 127.0.0.1:9200;" >> /etc/nginx/sites-available/elasticsearch
 echo "	keepalive 15;" >> /etc/nginx/sites-available/elasticsearch
 echo "}" >> /etc/nginx/sites-available/elasticsearch
 
+echo "upstream kibana {" >> /etc/nginx/sites-available/elasticsearch
+echo "	server 127.0.0.1:5601;" >> /etc/nginx/sites-available/elasticsearch
+echo "	keepalive 15;" >> /etc/nginx/sites-available/elasticsearch
+echo "}" >> /etc/nginx/sites-available/elasticsearch
+
 echo "server {" >> /etc/nginx/sites-available/elasticsearch
 echo "	listen 9201;" >> /etc/nginx/sites-available/elasticsearch
 echo "	auth_basic \"Elasticsearch authentication\";" >> /etc/nginx/sites-available/elasticsearch
