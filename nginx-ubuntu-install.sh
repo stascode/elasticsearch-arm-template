@@ -62,26 +62,6 @@ while getopts :u:p:h optname; do
   esac
 done
 
-setup_data_disk()
-{
-    log "Configuring disk $1/elasticsearch/data"
-
-    mkdir -p "$1/elasticsearch/data"
-    chown -R elasticsearch:elasticsearch "$1/elasticsearch"
-    chmod 755 "$1/elasticsearch"
-}
-
-# Install Oracle Java
-install_java()
-{
-    log "Installing Java"
-    add-apt-repository -y ppa:webupd8team/java
-    apt-get -y update  > /dev/null
-    echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
-    echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections
-    apt-get -y install oracle-java8-installer  > /dev/null
-}
-
 # Install Nginx
 install_nginx()
 {
@@ -92,10 +72,6 @@ install_nginx()
 
 # Primary Install Tasks
 #########################
-
-#Install Oracle Java
-#------------------------
-install_java
 
 #
 #Install Nginx
