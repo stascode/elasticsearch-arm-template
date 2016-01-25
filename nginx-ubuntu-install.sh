@@ -99,6 +99,19 @@ echo "		proxy_set_header Proxy-Connection \"Keep-Alive\";" >> /etc/nginx/sites-a
 echo "	}" >> /etc/nginx/sites-available/elasticsearch
 echo "}" >> /etc/nginx/sites-available/elasticsearch
 
+echo "server {" >> /etc/nginx/sites-available/elasticsearch
+echo "	listen 5602;" >> /etc/nginx/sites-available/elasticsearch
+echo "	auth_basic \"Elasticsearch authentication\";" >> /etc/nginx/sites-available/elasticsearch
+echo "	auth_basic_user_file /etc/nginx/elasticsearch-passwords;" >> /etc/nginx/sites-available/elasticsearch
+
+echo "	location / {" >> /etc/nginx/sites-available/elasticsearch
+echo "		proxy_pass http://elasticsearch;" >> /etc/nginx/sites-available/elasticsearch
+echo "		proxy_http_version 1.1;" >> /etc/nginx/sites-available/elasticsearch
+echo "		proxy_set_header Connection \"Keep-Alive\";" >> /etc/nginx/sites-available/elasticsearch
+echo "		proxy_set_header Proxy-Connection \"Keep-Alive\";" >> /etc/nginx/sites-available/elasticsearch
+echo "	}" >> /etc/nginx/sites-available/elasticsearch
+echo "}" >> /etc/nginx/sites-available/elasticsearch
+
 
 # Create configuration file for the basic authentication
 printf "$USERNAME:$(openssl passwd -1 $PASSWORD)\n" > /etc/nginx/elasticsearch-passwords
