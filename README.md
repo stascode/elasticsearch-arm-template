@@ -1,2 +1,2 @@
-# elasticsearch-arm-template
-The ARM template for the Elasticsearch deployment
+# Elasticsearch ARM template
+This template helps to create single-box deployment of Elasticsearch
