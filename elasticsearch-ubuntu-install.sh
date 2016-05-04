@@ -72,7 +72,7 @@ fi
 
 #Script Parameters
 CLUSTER_NAME="elasticsearch"
-ES_VERSION="1.7.2"
+ES_VERSION="2.3.2"
 DISCOVERY_ENDPOINTS="127.0.0.1"
 INSTALL_MARVEL="yes"
 INSTALL_KIBANA="yes"
@@ -160,6 +160,7 @@ install_es()
 
     log "Installing Elaticsearch Version - $ES_VERSION"
     sudo wget -q "https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-$ES_VERSION.deb" -O elasticsearch.deb
+
     sudo dpkg -i elasticsearch.deb
 }
 
@@ -268,7 +269,7 @@ if [ "${INSTALL_KIBANA}" == "yes" ];
     sudo wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
   
     # Create the Kibana source list
-    echo "deb http://packages.elastic.co/kibana/4.1/debian stable main" | sudo tee /etc/apt/sources.list.d/kibana.list
+    echo "deb http://packages.elastic.co/kibana/4.5/debian stable main" | sudo tee -a /etc/apt/sources.list
   
     # Update apt package database
     sudo apt-get update
@@ -277,7 +278,7 @@ if [ "${INSTALL_KIBANA}" == "yes" ];
     sudo apt-get -y --force-yes install kibana
   
     # Enable the Kibana service and start it
-    sudo update-rc.d kibana defaults 96 9
+    sudo update-rc.d kibana defaults 95 10
     sudo service kibana start
 fi
 

@@ -116,11 +116,11 @@
     },
 
 
-    "templateBaseUrl": "https://raw.githubusercontent.com/andrey-moor/elasticsearch-arm-template/master/",
+    "templateBaseUrl": "https://raw.githubusercontent.com/stascode/elasticsearch-arm-template/master/"
 
     "elasticsearchSettings": {
       "clusterName": "elasticsearch",
-      "clusterVersion": "1.7.2",
+      "clusterVersion": "2.3.2",
       "clusterDnsName": "[variables('clusterDnsName')]"
     },
 
